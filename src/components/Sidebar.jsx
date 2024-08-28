@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Home, LayoutGrid, PieChart, TriangleAlert, Settings } from "lucide-react";
+import { Home, LayoutGrid, TriangleAlert, Settings } from "lucide-react";
 
 export default function Sidebar() {
   const navItems = [

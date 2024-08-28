@@ -16,7 +16,7 @@ export default function AlertsList({ reports }) {
   };
 
   const filteredReports = reports.filter(report => 
-    report.alerts.some(alert => 
+    report.alerts && Array.isArray(report.alerts) && report.alerts.some(alert => 
       isAtLeastMedium(alert.risk, riskLevels) && 
       isAtLeastMedium(alert.confidence, confidenceLevels)
     )
@@ -25,6 +25,8 @@ export default function AlertsList({ reports }) {
   return (
     <div className="space-y-4">
       {filteredReports.map((report, index) => {
+        if (!report.alerts || !Array.isArray(report.alerts)) return null;
+
         const alertsToShow = report.alerts.filter(alert => 
           isAtLeastMedium(alert.risk, riskLevels) && 
           isAtLeastMedium(alert.confidence, confidenceLevels)
@@ -41,11 +43,11 @@ export default function AlertsList({ reports }) {
               <div className="flex items-center">
                 <span className="mr-6 rounded-full bg-neutral-700 px-2 py-1">{index + 1}</span>
                 <span className="font-semibold ml-3 text-red-600">path:</span>
-                <span className="text-white ml-4">{report.path}</span>
+                <span className="text-white ml-2">{report.path}</span>
               </div>
               <div className="flex items-center space-x-2 ml-20">
                 <span className="text-red-600 font-semibold text-right">Alerts:</span>
-                <span className="text-red-600 font-semibold">{report.alerts[0].alert}</span>
+                <span className="text-red-600 font-semibold">{alertsToShow[0].alert}</span>
               </div>
               <div className="flex items-center ml-4">
                 {openReportId === report._id ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
@@ -63,7 +65,7 @@ export default function AlertsList({ reports }) {
                     </li>
                   ))}
                 </ul>
-                {report.methods.map((method, methodIndex) => (
+                {report.methods && report.methods.map((method, methodIndex) => (
                   <div key={methodIndex} className="mb-4">
                     <p><strong>Method:</strong> {method.method}</p>
                     <p><strong>Description:</strong> {method.description}</p>

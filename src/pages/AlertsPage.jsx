@@ -74,7 +74,7 @@ export default function AlertsPage() {
           disabled={isSending}
         >
           <Radar className={`h-5 w-5 mr-2 ${isSending ? 'animate-pulse' : ''}`} />
-          Send Again
+          Scan Again
         </button>
       </div>
       {isLoading ? (

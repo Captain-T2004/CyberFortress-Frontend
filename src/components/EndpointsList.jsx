@@ -4,13 +4,19 @@ import { ChevronDown, ChevronUp } from 'lucide-react';
 const HealthBar = ({ percentage }) => (
   <div className="w-24 h-2 bg-gray-700 rounded-full overflow-hidden">
     <div 
-      className={`h-full ${percentage === 100 ? 'bg-green-500' : 'bg-yellow-500'}`}
+      className={`h-full ${
+        percentage === 100 ? 'bg-green-500' : 
+        percentage === 0 ? 'bg-gray-500' : 'bg-yellow-500'
+      }`}
       style={{ width: `${percentage}%` }}
     />
   </div>
 );
 
 const getStatus = (alerts) => {
+  if (!alerts || !Array.isArray(alerts) || alerts.length === 0) {
+    return 'In-Progress';
+  }
   const highRiskAlert = alerts.some(alert => 
     ['High', 'Critical', 'Medium'].includes(alert.risk)
   );
@@ -18,10 +24,13 @@ const getStatus = (alerts) => {
 };
 
 const getHealthPercentage = (alerts) => {
+  if (!alerts || !Array.isArray(alerts) || alerts.length === 0) {
+    return 0;
+  }
   const highRiskAlert = alerts.some(alert => 
     ['High', 'Critical', 'Medium'].includes(alert.risk)
   );
-  return highRiskAlert ? 70 : 100; // You can adjust this value between 65-70
+  return highRiskAlert ? 70 : 100;
 };
 
 export default function EndpointsList({ apis }) {
@@ -34,8 +43,9 @@ export default function EndpointsList({ apis }) {
   return (
     <div className="space-y-4">
       {apis.map((api) => {
-        const status = getStatus(api.alerts || []);
-        const healthPercentage = getHealthPercentage(api.alerts || []);
+        const status = getStatus(api.alerts);
+        const healthPercentage = getHealthPercentage(api.alerts);
+
         return (
           <div key={api._id} className="rounded-md bg-neutral-800 overflow-hidden">
             <button 
@@ -47,7 +57,10 @@ export default function EndpointsList({ apis }) {
                 <span className="font-semibold ml-3 flex-grow">{api.path}</span>
               </div>
               <div className="flex items-center space-x-4">
-                <span className={`px-2 py-1 rounded-full ${status === 'Alert' ? 'bg-red-500' : 'bg-lime-500'} text-black text-xs font-semibold`}>
+                <span className={`px-2 py-1 rounded-full ${
+                  status === 'Alert' ? 'bg-red-500' : 
+                  status === 'Ready' ? 'bg-lime-500' : 'bg-yellow-500'
+                } text-black text-xs font-semibold`}>
                   {status}
                 </span>
                 <HealthBar percentage={healthPercentage} />
